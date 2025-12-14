@@ -3,6 +3,7 @@ import { router } from '@inertiajs/react';
 import { toPng } from 'html-to-image';
 import download from 'downloadjs';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import ProductHuntButton from '../components/ProductHuntButton';
 
 interface GitHubStats {
     user: {
@@ -411,6 +412,7 @@ export default function WrappedPage({ username }: Props) {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-black via-zinc-950 to-black relative overflow-hidden flex items-center justify-center p-4 sm:p-6">
+            <ProductHuntButton />
             {/* Back Button */}
             <button
                 onClick={() => router.visit('/')}
@@ -593,6 +595,42 @@ export default function WrappedPage({ username }: Props) {
                                     </div>
                                 }
                             />
+                        </div>
+
+                        {/* Product Hunt Message */}
+                        <div className="exclude-from-screenshot bg-gradient-to-r from-orange-500/20 to-orange-600/20 border border-orange-500/30 rounded-lg p-3 flex items-center justify-between gap-3 flex-shrink-0">
+                            <p className="text-white text-xs sm:text-sm">
+                                <span className="text-orange-400">❤️</span> Love GitWrap?{' '}
+                                <a
+                                    href="https://www.producthunt.com/products/gitwrap-2026"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-orange-400 hover:text-orange-300 font-semibold underline"
+                                >
+                                    Upvote on Product Hunt
+                                </a>
+                            </p>
+                            <a
+                                href="https://www.producthunt.com/products/gitwrap-2026"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded text-xs font-semibold transition-colors flex items-center gap-1.5 whitespace-nowrap"
+                            >
+                                <svg
+                                    className="w-3 h-3"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                                    />
+                                </svg>
+                                Upvote
+                            </a>
                         </div>
 
                         {/* Footer */}

@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { router } from '@inertiajs/react';
 import DialogBackground from '../components/DialogBackground';
+import ProductHuntButton from '../components/ProductHuntButton';
 
 export default function Home() {
     const [username, setUsername] = useState('');
@@ -16,6 +17,7 @@ export default function Home() {
 
     return (
         <div className="relative flex min-h-screen items-center justify-center bg-gradient-to-br from-black via-zinc-950 to-black overflow-hidden">
+            <ProductHuntButton />
             <DialogBackground />
             <main className="relative z-10 flex min-h-screen w-full max-w-4xl flex-col items-center justify-center px-8 py-16">
                 {/* Main Dialog Box Container */}
