@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { router } from '@inertiajs/react';
 import { toPng } from 'html-to-image';
 import download from 'downloadjs';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 interface GitHubStats {
     user: {
@@ -305,11 +306,46 @@ export default function WrappedPage({ username }: Props) {
     const streak = Math.min(stats.reposActive, 47);
     const topLanguage = stats.topLanguages[0] || 'N/A';
 
-    // Calculate rank (placeholder - would need actual data)
-    const rank = 'Top 80%';
+    // Calculate rank based on commits per year (assuming commits are for current year)
+    const calculateRank = (commits: number): string => {
+        if (commits >= 5000) return 'Top 0.5%';
+        if (commits >= 2000) return 'Top 1%';
+        if (commits >= 1000) return 'Top 2%';
+        if (commits >= 500) return 'Top 5%';
+        if (commits >= 200) return 'Top 20%';
+        if (commits >= 50) return 'Top 50%';
+        return 'Top 80%';
+    };
+
+    // Calculate power level based on total commits
+    const calculatePowerLevel = (commits: number): string => {
+        if (commits >= 9000) return 'God Mode';
+        if (commits >= 4000) return 'Super Saiyan';
+        if (commits >= 2000) return 'Sage Mode';
+        if (commits >= 1000) return 'Elite Class';
+        if (commits >= 500) return 'Ninja';
+        if (commits >= 100) return 'Adventurer';
+        return 'Rookie';
+    };
+
+    // Get power level emoji for display
+    const getPowerLevelEmoji = (powerLevel: string): string => {
+        switch (powerLevel) {
+            case 'God Mode': return '🪐';
+            case 'Super Saiyan': return '🔥💥';
+            case 'Sage Mode': return '🌀';
+            case 'Elite Class': return '⚡';
+            case 'Ninja': return '🌪️';
+            case 'Adventurer': return '🛡️';
+            case 'Rookie': return '🌱';
+            default: return '🌱';
+        }
+    };
+
+    const rank = calculateRank(stats.totalCommits);
     const mostActiveMonth = 'January'; // Placeholder
     const mostActiveDay = 'Sunday'; // Placeholder
-    const powerLevel = 'Rookie'; // Placeholder
+    const powerLevel = calculatePowerLevel(stats.totalCommits);
 
     const handleDownload = () => {
         const node = document.getElementById('my-section-to-capture');
@@ -478,6 +514,20 @@ export default function WrappedPage({ username }: Props) {
                                 bgIcon="trophy"
                                 gradient="from-yellow-400 to-orange-500"
                                 delay={0}
+                                tooltipContent={
+                                    <div className="space-y-1.5 text-zinc-900">
+                                        <div>5000+ commits/year → Top 0.5%</div>
+                                        <div>2000+ commits/year → Top 1%</div>
+                                        <div>1000+ commits/year → Top 2%</div>
+                                        <div>500+ commits/year → Top 5%</div>
+                                        <div>200+ commits/year → Top 20%</div>
+                                        <div>50+ commits/year → Top 50%</div>
+                                        <div>Less than 50 commits → Top 80%</div>
+                                        <div className="text-xs text-zinc-600 mt-2 pt-2 border-t border-zinc-400">
+                                            Note: This is an estimation and not backed by any reliable data.
+                                        </div>
+                                    </div>
+                                }
                             />
                             <StatCard
                                 title="Longest Streak"
@@ -527,10 +577,21 @@ export default function WrappedPage({ username }: Props) {
                             />
                             <StatCard
                                 title="Power Level"
-                                value={powerLevel}
+                                value={`${getPowerLevelEmoji(powerLevel)} ${powerLevel}`}
                                 bgIcon="globe"
                                 gradient="from-yellow-400 to-orange-500"
                                 delay={700}
+                                tooltipContent={
+                                    <div className="space-y-1.5 text-zinc-900">
+                                        <div className="font-semibold mb-2">Power Levels:</div>
+                                        <div>100+ commits: Adventurer 🛡️</div>
+                                        <div>500+ commits: Ninja 🌪️</div>
+                                        <div>1000+ commits: Elite Class ⚡</div>
+                                        <div>2000+ commits: Sage Mode 🌀</div>
+                                        <div>4000+ commits: Super Saiyan 🔥💥</div>
+                                        <div>9000+ commits: God Mode 🪐</div>
+                                    </div>
+                                }
                             />
                         </div>
 
@@ -577,12 +638,14 @@ function StatCard({
     bgIcon,
     gradient,
     delay = 0,
+    tooltipContent,
 }: {
     title: string;
     value: string;
     bgIcon: 'trophy' | 'calendar' | 'globe' | 'star';
     gradient: string;
     delay?: number;
+    tooltipContent?: React.ReactNode;
 }) {
     const getBackgroundIcon = () => {
         switch (bgIcon) {
@@ -655,7 +718,7 @@ function StatCard({
         }
     };
 
-    return (
+    const cardContent = (
         <div
             className="rounded-xl bg-zinc-800/50 border border-zinc-700/50 p-3 text-center backdrop-blur-sm transition-all duration-300"
             style={{ animationDelay: `${delay}ms` }}
@@ -668,5 +731,23 @@ function StatCard({
             <div className="text-[9px] text-zinc-400 font-medium">{title}</div>
         </div>
     );
+
+    if (tooltipContent) {
+        return (
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    {cardContent}
+                </TooltipTrigger>
+                <TooltipContent
+                    className="bg-zinc-200 text-zinc-900 border-zinc-300 max-w-xs p-3 text-xs rounded-lg shadow-lg"
+                    side="top"
+                >
+                    {tooltipContent}
+                </TooltipContent>
+            </Tooltip>
+        );
+    }
+
+    return cardContent;
 }
 
